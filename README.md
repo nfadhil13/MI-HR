@@ -1,4 +1,4 @@
-# movie_app
+# MI - HR
 
 A new Flutter project.
 
