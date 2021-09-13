@@ -36,7 +36,7 @@ class ClientWithLogger extends http.BaseClient {
         headers:  finalHeader,
         body : body,
         encoding: encoding
-    ).timeout(Duration(seconds: 1));
+    );
   }
 
 
