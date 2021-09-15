@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/datasource/cache/service/UserDao.dart';
+import 'package:movie_app/datasource/cache/service/user_dao.dart';
 import 'package:movie_app/models/employee.dart';
 
 class EmployeeGridItem extends StatelessWidget {

@@ -1,18 +1,21 @@
-import 'package:movie_app/datasource/cache/service/UserDao.dart';
+import 'package:movie_app/datasource/cache/service/user_dao.dart';
 import 'package:movie_app/datasource/network/error_extractor.dart';
 import 'package:movie_app/datasource/network/service/absensi_service.dart';
+import 'package:movie_app/datasource/network/service/user_service.dart';
 import 'package:movie_app/models/absensi.dart';
 import 'package:movie_app/repository/response.dart';
 
 class AbsensiRepository {
 
   final _absensiService = AbsensiService();
+  final _userService = UserService();
   final _userDao = UserDao();
 
-  Future<Response<List<Absensi>>> getAbsensiList() async {
+  Future<Resource<List<Absensi>>> getAbsensiList() async {
     try{
       final sessionId = await _userDao.getLastLoginUserSession();
       if(sessionId == null) return NotAuthorize();
+      print((await _userService.getUserProfile(sessionId)).name);
       final departmentList = await _absensiService.getAbsensiOfUser(sessionId);
       print("${departmentList[0].checkOut} ${departmentList[0].id}");
       return Success(data: departmentList);
@@ -24,7 +27,7 @@ class AbsensiRepository {
     }
   }
 
-  Future<Response<dynamic>> checkIn(double latitude, double longitude) async {
+  Future<Resource<dynamic>> checkIn(double latitude, double longitude) async {
     try{
       final sessionId = await _userDao.getLastLoginUserSession();
       if(sessionId == null) return NotAuthorize();
@@ -38,7 +41,7 @@ class AbsensiRepository {
     }
   }
 
-  Future<Response<dynamic>> checkOut(double latitude, double longitude) async {
+  Future<Resource<dynamic>> checkOut(double latitude, double longitude) async {
     try{
       final sessionId = await _userDao.getLastLoginUserSession();
       if(sessionId == null) return NotAuthorize();

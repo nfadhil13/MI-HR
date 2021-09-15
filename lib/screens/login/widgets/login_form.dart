@@ -1,39 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/repository/user_repository.dart';
-import 'package:movie_app/screens/department_list/department_list_screen.dart';
-import 'package:movie_app/screens/home/home_screen.dart';
+import 'package:get/get.dart';
+import 'package:movie_app/screens/login/login_controller.dart';
 import 'package:movie_app/util/color.dart';
 import 'package:movie_app/widgets/white_button.dart';
 
-class LoginForm extends StatefulWidget {
-  const LoginForm({Key? key}) : super(key: key);
+class LoginForm extends StatelessWidget {
 
-  @override
-  _LoginFormState createState() => _LoginFormState();
-}
-
-class _LoginFormState extends State<LoginForm> {
-
-  GlobalKey buttonKey = GlobalKey();
-
-  var _username = "";
-  var _password = "";
-
-  var userRepository = UserRepository();
-
-  final _passwordFocus = FocusNode();
-
-  final _form = GlobalKey<FormState>();
-
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _passwordFocus.dispose();
-    super.dispose();
-  }
-
-  InputDecoration _inputDecoration() {
+  InputDecoration _inputDecoration(BuildContext context) {
     return InputDecoration(
       filled: true,
       fillColor: Colors.white,
@@ -59,32 +32,10 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  void save() async {
-    final currentState = _form.currentState;
-    print(currentState);
-    if (currentState != null && currentState.validate()) {
-      currentState.save();
-      final result = await userRepository.login(_username, _password);
-      result.whenWithResult(
-              success: (value) {
-                Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-              },
-              error: (value) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.redAccent,
-              content: Container(
-                child: Text(value.message, style: TextStyle(
-                    color: Colors.white
-                )),
-              ),
-            ));
-          }
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final loginController = Get.find<LoginController>();
     return   Container(
       decoration: BoxDecoration(
           color: ThemeColors.primarySecond,
@@ -100,7 +51,7 @@ class _LoginFormState extends State<LoginForm> {
       ),
       padding: EdgeInsets.only(left: 32, right: 32, top: 48, bottom: 24),
       child: Form(
-        key: _form,
+        key: loginController.form,
         child: Column(
           children: [
             Text("Sign In", style: TextStyle(
@@ -118,11 +69,11 @@ class _LoginFormState extends State<LoginForm> {
             TextFormField(
               style: TextStyle(color: Colors.black, fontSize: 14),
               cursorColor: Colors.black,
-              decoration: _inputDecoration(),
+              decoration: _inputDecoration(context),
               maxLines: 1,
               textInputAction: TextInputAction.next,
               onFieldSubmitted: (_) {
-                FocusScope.of(context).requestFocus(_passwordFocus);
+                FocusScope.of(context).requestFocus(loginController.passwordFocus);
               },
               validator: (value) {
                 if (value == null || value.isEmpty)
@@ -130,7 +81,7 @@ class _LoginFormState extends State<LoginForm> {
                 return null;
               },
               onSaved: (value) {
-                _username = value ?? _username;
+                if(value != null) loginController.setUsername(value);
               },
             ),
             SizedBox(height: 48),
@@ -140,16 +91,17 @@ class _LoginFormState extends State<LoginForm> {
                 child: Text("Password ", style: TextStyle(color: Colors.white.withOpacity(0.7)))
             ),
             SizedBox(height: 5),
-            TextFormField(
-              focusNode: _passwordFocus,
+            GetBuilder<LoginController>(
+              builder: (value) => TextFormField(
+              focusNode: loginController.passwordFocus,
               obscureText: true,
-              maxLines: 1,
-              style: TextStyle(color: Colors.black, fontSize: 14),
+                  maxLines: 1,
+                  style: TextStyle(color: Colors.black, fontSize: 14),
               cursorColor: Colors.black,
               textInputAction: TextInputAction.send,
-              decoration: _inputDecoration( ),
+              decoration: _inputDecoration(context),
               onFieldSubmitted: (_) {
-                save();
+                value.save();
               },
               validator: (value) {
                 if (value == null || value.isEmpty)
@@ -157,14 +109,16 @@ class _LoginFormState extends State<LoginForm> {
                 return null;
               },
               onSaved: (value) {
-                _password = value ?? _password;
+                if(value != null) loginController.setPassword(value);
               },
             ),
+            ),
             SizedBox(height: 60),
-            MainButton(onTap: () {
-              print("Halo halo");
-              save();
-            })
+            GetBuilder<LoginController>(
+              builder: (value) => MainButton(onTap: () {
+                value.save();
+              }),
+            )
           ],
         ),
       ),

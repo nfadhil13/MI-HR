@@ -3,15 +3,18 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:movie_app/models/location_data.dart';
-import 'package:movie_app/provider/absensi_provider.dart';
+import 'package:movie_app/screens/home/home_screen.dart';
 import 'package:movie_app/screens/map_screen/map_bottom_sheet.dart';
 import 'package:movie_app/util/color.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import 'package:movie_app/provider/provider_state.dart';
+
+import 'map_controller.dart';
 
 
 class MapScreen extends StatefulWidget {
@@ -92,6 +95,7 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mapController = Get.find<MapController>();
     return new Scaffold(
       body: Stack(
         children: [
@@ -121,36 +125,18 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ),
           Positioned.fill(
-            child: Consumer<AbsensiProvider>(
-              builder: (_, provider, __){
-                print("Ada notify woy");
-                return provider.currentState.when<Widget?>(
+            child: Obx(() {
+              return mapController.currentState.value.when<Widget?>(
                   onLoading: () {
                     return Container(
-                      color: Colors.black.withOpacity(0.25),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      )
+                        color: Colors.black.withOpacity(0.25),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        )
                     );
-                  },
-                  onError: () {
-                    final errorMessage = provider.errorMessage;
-                    print("Error dengan error message $errorMessage");
-                    if(errorMessage != null){
-                      _showScaffold(errorMessage);
-                    }
-                  },
-                  onIdle: () {
-                    final isFetchingDone = provider.isAttendanceFetchDone;
-                    if(isFetchingDone != null){
-                      WidgetsBinding.instance?.addPostFrameCallback((_) {
-                        Navigator.pop(context, true);
-                      });
-                    }
                   }
-                ) ?? SizedBox();
-              }
-            ),
+              ) ?? SizedBox();
+            } )
           )
         ],
       )

@@ -1,5 +1,5 @@
 import 'package:image_picker/image_picker.dart';
-import 'package:movie_app/datasource/cache/service/UserDao.dart';
+import 'package:movie_app/datasource/cache/service/user_dao.dart';
 import 'package:movie_app/datasource/network/error_extractor.dart';
 import 'package:movie_app/datasource/network/service/employee_service.dart';
 import 'package:movie_app/repository/response.dart';
@@ -8,7 +8,7 @@ class EmployeeRepository {
   final employeeService = EmployeeService();
   final userDao = UserDao();
 
-  Future<Response<String>> addNewEmployee(
+  Future<Resource<String>> addNewEmployee(
       String name, String email, XFile image, int departmentId) async {
     try {
       final sessionId = await userDao.getLastLoginUserSession();

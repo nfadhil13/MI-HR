@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/datasource/cache/service/UserDao.dart';
+import 'package:get/get.dart';
+import 'package:movie_app/datasource/cache/service/user_dao.dart';
 import 'package:movie_app/screens/absensi/absensi_screen.dart';
+import 'package:movie_app/screens/home/home_screen.dart';
 import 'package:movie_app/screens/login/login_screen.dart';
 import 'package:movie_app/util/color.dart';
 
@@ -23,7 +25,7 @@ class MainDrawer extends StatelessWidget {
             ElevatedButton(
                 onPressed: () async{
                   await UserDao().logout();
-                  Navigator.of(context).pushNamedAndRemoveUntil(LoginScreen.routeName, (route) => false);
+                  Get.offAllNamed(LoginScreen.routeName);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.redAccent

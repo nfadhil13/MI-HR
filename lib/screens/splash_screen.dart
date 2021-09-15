@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:movie_app/repository/user_repository.dart';
 import 'package:movie_app/screens/department_list/department_list_screen.dart';
 import 'package:movie_app/screens/home/home_screen.dart';
@@ -6,6 +7,8 @@ import 'package:movie_app/screens/login/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
+
+  static final routeName = "/";
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -24,10 +27,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void checkLastLoggedInUser() async{
     (await userRepository.getLastLoggedInSessionId()).whenWithResult(
       success: (value) {
-        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        Get.offNamed(HomeScreen.routeName);
       },
       notAuthorize: (dynamic) {
-        Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+        Get.offNamed(LoginScreen.routeName);
       }
     );
   }

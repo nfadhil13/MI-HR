@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:movie_app/controller/absensi_global_controller.dart';
 import 'package:movie_app/models/location_data.dart';
-import 'package:movie_app/provider/absensi_provider.dart';
+import 'package:movie_app/screens/map_screen/map_controller.dart';
 import 'package:movie_app/util/color.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -12,6 +14,8 @@ class MapBottomSheet extends StatelessWidget {
   MapBottomSheet(this._location);
 
   Widget _buildBottomSheetMain() {
+    final absensiController = Get.find<AbsensiGlobalController>();
+    final mapController = Get.find<MapController>();
     return Container(
       padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 3.h),
       width: double.infinity,
@@ -43,26 +47,22 @@ class MapBottomSheet extends StatelessWidget {
               textAlign: TextAlign.center,
               style:
                   TextStyle(color: ThemeColors.primarySecond, fontSize: 12.sp)),
-          Consumer<AbsensiProvider>(
-            builder: (_, provider, ___){
-              return ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: ThemeColors.primarySecond,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8))),
-                  onPressed: () {
-                    if(provider.shouldCheckIn()){
-                      provider.checkIn(_location.location.latitude, _location.location.latitude);
-                    }else{
-                      provider.checkOut(_location.location.latitude, _location.location.latitude);
-                    }
-                  },
-                  child: Container(width: 50.w, child: Text(
-                    provider.shouldCheckIn() ? "Check In" : "Check Out"
-                  ), alignment: Alignment.center,));
-            }
-          )
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  primary: ThemeColors.primarySecond,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8))),
+              onPressed: () {
+                if(absensiController.shouldCheckIn){
+                  mapController.checkIn(_location.location.latitude, _location.location.latitude);
+                }else{
+                  mapController.checkOut(_location.location.latitude, _location.location.latitude);
+                }
+              },
+              child: Container(width: 50.w, child: Text(
+                  absensiController.shouldCheckIn ? "Check In" : "Check Out"
+              ), alignment: Alignment.center,))
         ],
       ),
     );

@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:movie_app/screens/absensi_history/absensi_history_screen.dart';
 import 'package:movie_app/util/color.dart';
 import 'package:sizer/sizer.dart';
 
@@ -23,10 +25,15 @@ class HomeAttendanceTitle extends StatelessWidget {
                   fontSize: 13.sp
               ),),
               Expanded(child: SizedBox()),
-              Text("More History", style: TextStyle(
-                  color: ThemeColors.primaryThird,
-                  fontSize: 10.sp
-              ))
+              InkWell(
+                onTap: (){
+                  Get.toNamed(AbsensiHistoryScreen.routeName);
+                },
+                child: Text("More History", style: TextStyle(
+                    color: ThemeColors.primaryThird,
+                    fontSize: 10.sp
+                )),
+              )
             ],
           )
         ],

@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:movie_app/controller/absensi_global_controller.dart';
+import 'package:movie_app/datasource/cache/hive_helper.dart';
 import 'package:movie_app/datasource/cache/local_storage.dart';
 import 'package:movie_app/models/department.dart';
 import 'package:movie_app/models/location_data.dart';
-import 'package:movie_app/provider/absensi_provider.dart';
 import 'package:movie_app/provider/department_provider.dart';
+import 'package:movie_app/screens/absensi_history/absensi_binding.dart';
+import 'package:movie_app/screens/absensi_history/absensi_history_screen.dart';
+import 'package:movie_app/screens/map_screen/map_binding.dart';
 import 'package:movie_app/screens/absensi/absensi_screen.dart';
 import 'package:movie_app/screens/department_detail/department_detail_screen.dart';
 import 'package:movie_app/screens/department_list/department_list_screen.dart';
 import 'package:movie_app/screens/employee_form/add_edit_employee_screen.dart';
 import 'package:movie_app/screens/getting_location_screen/getting_location_screen.dart';
+import 'package:movie_app/screens/home/home_binding.dart';
 import 'package:movie_app/screens/home/home_screen.dart';
 import 'package:movie_app/screens/login/login_screen.dart';
 import 'package:movie_app/screens/map_screen/map_screen.dart';
@@ -20,7 +27,12 @@ import 'package:sizer/sizer.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setEnabledSystemUIOverlays([]);
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  await HiveHelper.init();
   runApp(MyApp());
 }
 
@@ -31,10 +43,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (ctx) => DepartmentProvider()),
-        ChangeNotifierProvider(create: (ctx) => AbsensiProvider())
       ],
       child: Sizer(
-        builder: (_ , __ , ___) => MaterialApp(
+        builder: (_ , __ , ___) => GetMaterialApp(
             title: 'Flutter Demo',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
@@ -43,23 +54,15 @@ class MyApp extends StatelessWidget {
                 textTheme: TextTheme().apply(bodyColor: Colors.white, displayColor: Colors.white),
                 fontFamily: 'Poppins'
             ),
-            home: SplashScreen(),
-            routes: {
-              HomeScreen.routeName: (ctx) => HomeScreen(),
-              AbsensiScreen.routeName : (ctx) => AbsensiScreen(),
-              LoginScreen.routeName: (ctx) => LoginScreen(),
-              AddEditEmployeeScreen.routeName : (ctx) => AddEditEmployeeScreen(),
-              DepartmentListScreen.routeName : (ctx) => DepartmentListScreen(),
-              DepartmentDetailScreen.routeName : (ctx) {
-                final departmentData = ModalRoute.of(ctx)?.settings.arguments as Department;
-                return DepartmentDetailScreen(departmentData);
-              },
-              GettingLocationScreen.routeName : (ctx)  => GettingLocationScreen(),
-              MapScreen.routeName: (ctx) {
-                final latlang = ModalRoute.of(ctx)?.settings.arguments as LocationData;
-                return MapScreen(latlang);
-              }
-            },
+            initialRoute: "/",
+            getPages: [
+              GetPage(name: SplashScreen.routeName, page:()  => SplashScreen()),
+              GetPage(name: LoginScreen.routeName, page: () => LoginScreen()),
+              GetPage(name: HomeScreen.routeName, page: () => HomeScreen(), binding: HomeBinding()),
+              GetPage(name: GettingLocationScreen.routeName, page: () => GettingLocationScreen()),
+              GetPage(name: MapScreen.routeName, page: () => MapScreen(Get.arguments as LocationData), binding: MapBinding()),
+              GetPage(name: AbsensiHistoryScreen.routeName, page: () => AbsensiHistoryScreen(), binding: AbsensiBinding())
+            ],
           )
       ),
     );

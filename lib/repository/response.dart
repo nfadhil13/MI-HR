@@ -1,4 +1,4 @@
-abstract class Response<T> {
+abstract class Resource<T> {
   void whenWithResult(
   {
     Function(Success<T>)? success,
@@ -18,22 +18,22 @@ abstract class Response<T> {
   }
 }
 
-class Success<T> extends Response<T> {
+class Success<T> extends Resource<T> {
   final T data;
 
   Success({required this.data});
 }
 
-class Error<T> extends Response<T> {
+class Error<T> extends Resource<T> {
   final String message;
 
   Error({ required this.message});
 }
 
-class NotAuthorize<T> extends Response<T> {
+class NotAuthorize<T> extends Resource<T> {
   NotAuthorize();
 }
 
-class DoNothing<T> extends Response<T> {
+class DoNothing<T> extends Resource<T> {
   DoNothing();
 }

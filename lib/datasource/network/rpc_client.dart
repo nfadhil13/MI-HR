@@ -41,17 +41,20 @@ class ClientWithLogger extends http.BaseClient {
 
 
 
-  Future<http.Response> getWithCookie(Uri url, String cookieValue, {Map<String, String>? headers}) {
+  Future<http.Response> getWithCookie(Uri url, String cookieValue, {Map<String, String>? headers}) async{
     final finalHeader = headers != null ? headers : Map<String, String>();
     finalHeader.addAll(
         {
           "cookie" : cookieValue
         }
     );
-    return this.get(url,
-      headers: finalHeader
-    );
+    final result = await this.get(url, headers: finalHeader);
+    print("====Result dari get===");
+    print(result.body);
+    return result;
   }
+
+
 
 
   @override

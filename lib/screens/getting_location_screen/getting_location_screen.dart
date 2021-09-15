@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:movie_app/screens/map_screen/map_screen.dart';
 import 'package:movie_app/util/location_helper.dart';
@@ -32,10 +33,7 @@ class _GettingLocationScreenState extends State<GettingLocationScreen> {
       final locationResult = await _locationHelper.determinePosition();
 
       if(!locationResult.isMocked){
-        Navigator.of(context).pushReplacementNamed(
-            MapScreen.routeName,
-            arguments: locationResult
-        );
+        Get.offNamed(MapScreen.routeName, arguments: locationResult);
       }else{
 
       }
